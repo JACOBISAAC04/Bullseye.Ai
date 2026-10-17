@@ -1,0 +1,18 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+backend/data/analyzed/
+backend/data/ball_dataset/
+backend/data/ball_frames/
+backend/runs/
+yolov8*.pt
+yolo11*.pt
+*.zip
+
+# keep only the test videos
+backend/data/videos/*
+!backend/data/videos/video8.mp4
+!backend/data/videos/529423d1-*.mp4
+!backend/data/videos/gettyimages-474378156-640_adpp.mp4
+!backend/data/videos/gettyimages-475129293-640_adpp.mp4

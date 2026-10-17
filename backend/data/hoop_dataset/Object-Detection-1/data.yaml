@@ -1,0 +1,12 @@
+names:
+- hoop
+nc: 1
+roboflow:
+  license: Private
+  project: object-detection-1wdi1
+  url: https://app.roboflow.com/jacob-isaac/object-detection-1wdi1/1
+  version: 1
+  workspace: jacob-isaac
+test: test/images
+train: train/images
+val: valid/images

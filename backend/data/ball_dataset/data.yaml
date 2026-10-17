@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 1
+names: ['ball']
+
+roboflow:
+  workspace: jacob-isaac
+  project: ball-detection-tovpe
+  version: 1
+  license: Private
+  url: https://app.roboflow.com/jacob-isaac/ball-detection-tovpe/1

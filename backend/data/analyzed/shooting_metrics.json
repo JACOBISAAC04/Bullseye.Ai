@@ -1,0 +1,326 @@
+{
+  "shot_count": 4,
+  "pixels_per_meter": 243.37343302857244,
+  "shots": [
+    {
+      "shot_number": 1,
+      "arm": "left",
+      "start_frame": 14,
+      "release_frame": 40,
+      "end_frame": 71,
+      "set": {
+        "frame": 14,
+        "elbow_angle": 107.07852341535123,
+        "hip_angle": 161.6123565683963,
+        "knee_angle": 145.0558242761155,
+        "wrist_position": {
+          "x": 406.3153553009033,
+          "y": 699.2900633811951,
+          "z": 0.07374688982963562
+        },
+        "ball_position": {
+          "x": 459.0591735839844,
+          "y": 688.6144409179688
+        },
+        "body_alignment": {
+          "torso_lean_angle": 6.220789486136186,
+          "shoulder_center": {
+            "x": 339.53564643859863,
+            "y": 639.7010564804077
+          },
+          "hip_center": {
+            "x": 326.6284418106079,
+            "y": 758.1137073040009
+          }
+        }
+      },
+      "release": {
+        "frame": 40,
+        "ball_frame": 39,
+        "ball_to_wrist_distance_pixels": 55.55900673690082,
+        "elbow_angle": 162.19809590006875,
+        "hip_angle": 179.4033617905366,
+        "knee_angle": 155.4410429274566,
+        "wrist_position": {
+          "x": 506.5901756286621,
+          "y": 508.9600396156311,
+          "z": 0.05985991656780243
+        },
+        "arm_extension_ratio": 0.9879900226309511,
+        "ball_position": {
+          "x": 492.99847412109375,
+          "y": 465.4721374511719
+        },
+        "release_height_pixels_from_top": 465.4721374511719,
+        "release_height_relative_to_hip": 255.6447558403015,
+        "ball_velocity_pixels_per_second": 1298.9396431427222,
+        "ball_velocity_meters_per_second": 5.33722858316349
+      },
+      "follow_through": {
+        "frame": 71,
+        "elbow_angle": 154.59651371801542,
+        "hip_angle": 165.8973096022125,
+        "knee_angle": 161.10509899998354,
+        "wrist_position": {
+          "x": 444.11267280578613,
+          "y": 737.1041893959045,
+          "z": 0.04826278239488602
+        },
+        "arm_extension_ratio": 0.9758719819474848,
+        "balance": {
+          "horizontal_offset_pixels": 24.467668533325195,
+          "normalized_offset": 0.651969693239725
+        }
+      },
+      "trajectory": {
+        "point_count": 58,
+        "average_velocity_pixels_per_second": 875.3739442389266,
+        "average_velocity_meters_per_second": 3.5968344340039624,
+        "peak_velocity_pixels_per_second": 1695.6210515566565,
+        "peak_velocity_meters_per_second": 6.967157550666543,
+        "initial_velocity_pixels_per_second": 135.50339986333734,
+        "initial_velocity_meters_per_second": 0.5567715349087795
+      }
+    },
+    {
+      "shot_number": 2,
+      "arm": "left",
+      "start_frame": 168,
+      "release_frame": 195,
+      "end_frame": 225,
+      "set": {
+        "frame": 168,
+        "elbow_angle": 124.00206287332595,
+        "hip_angle": 161.01297119031938,
+        "knee_angle": 164.55305287690288,
+        "wrist_position": {
+          "x": 426.12836837768555,
+          "y": 713.2262420654297,
+          "z": 0.007351192645728588
+        },
+        "ball_position": {
+          "x": 463.18634033203125,
+          "y": 726.1109924316406
+        },
+        "body_alignment": {
+          "torso_lean_angle": 9.067817300669269,
+          "shoulder_center": {
+            "x": 365.16039848327637,
+            "y": 643.8293302059174
+          },
+          "hip_center": {
+            "x": 347.25133895874023,
+            "y": 756.042891740799
+          }
+        }
+      },
+      "release": {
+        "frame": 195,
+        "ball_frame": 187,
+        "ball_to_wrist_distance_pixels": 34.32686897085681,
+        "elbow_angle": 155.49544862751318,
+        "hip_angle": 179.24207875624586,
+        "knee_angle": 159.75874977936996,
+        "wrist_position": {
+          "x": 500.7598114013672,
+          "y": 519.0816020965576,
+          "z": 0.06128571182489395
+        },
+        "arm_extension_ratio": 0.9773250631632449,
+        "ball_position": {
+          "x": 460.21282958984375,
+          "y": 604.6036987304688
+        },
+        "release_height_pixels_from_top": 604.6036987304688,
+        "release_height_relative_to_hip": 121.42537069320679,
+        "ball_velocity_pixels_per_second": 385.3939836777966,
+        "ball_velocity_meters_per_second": 1.583549933457818
+      },
+      "follow_through": {
+        "frame": 225,
+        "elbow_angle": 133.3327699431694,
+        "hip_angle": 160.3974052141879,
+        "knee_angle": 171.603015471296,
+        "wrist_position": {
+          "x": 381.94753646850586,
+          "y": 744.7589778900146,
+          "z": -0.0014765787636861205
+        },
+        "arm_extension_ratio": 0.9186699524793009,
+        "balance": {
+          "horizontal_offset_pixels": 22.039875984191895,
+          "normalized_offset": 0.22682551122678965
+        }
+      },
+      "trajectory": {
+        "point_count": 58,
+        "average_velocity_pixels_per_second": 822.8518302171047,
+        "average_velocity_meters_per_second": 3.3810256936323064,
+        "peak_velocity_pixels_per_second": 1724.3086517875545,
+        "peak_velocity_meters_per_second": 7.085032373213545,
+        "initial_velocity_pixels_per_second": 86.39242338170408,
+        "initial_velocity_meters_per_second": 0.3549788582370101
+      }
+    },
+    {
+      "shot_number": 3,
+      "arm": "left",
+      "start_frame": 459,
+      "release_frame": 494,
+      "end_frame": 526,
+      "set": {
+        "frame": 459,
+        "elbow_angle": 125.48149037365609,
+        "hip_angle": 171.78289537769683,
+        "knee_angle": 176.73938960134254,
+        "wrist_position": {
+          "x": 426.3622570037842,
+          "y": 721.8515181541443,
+          "z": 0.050057489424943924
+        },
+        "ball_position": {
+          "x": 468.456298828125,
+          "y": 737.6830444335938
+        },
+        "body_alignment": {
+          "torso_lean_angle": 6.014391588209736,
+          "shoulder_center": {
+            "x": 358.21131706237793,
+            "y": 638.3177125453949
+          },
+          "hip_center": {
+            "x": 346.1970090866089,
+            "y": 752.3506808280945
+          }
+        }
+      },
+      "release": {
+        "frame": 494,
+        "ball_frame": 489,
+        "ball_to_wrist_distance_pixels": 38.77427759070991,
+        "elbow_angle": 164.52452240880444,
+        "hip_angle": 179.8999082948502,
+        "knee_angle": 156.05209899619265,
+        "wrist_position": {
+          "x": 508.2773208618164,
+          "y": 514.9838411808014,
+          "z": 0.07686945050954819
+        },
+        "arm_extension_ratio": 0.9908949986250438,
+        "ball_position": {
+          "x": 441.3993682861328,
+          "y": 565.3780314127604
+        },
+        "release_height_pixels_from_top": 565.3780314127604,
+        "release_height_relative_to_hip": 157.55430968602502,
+        "ball_velocity_pixels_per_second": 381.14587962117326,
+        "ball_velocity_meters_per_second": 1.5660948480618513
+      },
+      "follow_through": {
+        "frame": 526,
+        "elbow_angle": 156.52405118299157,
+        "hip_angle": 176.69793184144532,
+        "knee_angle": 165.37533238053433,
+        "wrist_position": {
+          "x": 452.8487205505371,
+          "y": 736.6317558288574,
+          "z": 0.038132570683956146
+        },
+        "arm_extension_ratio": 0.9794965332155525,
+        "balance": {
+          "horizontal_offset_pixels": 40.16617298126221,
+          "normalized_offset": 0.46260634955556346
+        }
+      },
+      "trajectory": {
+        "point_count": 68,
+        "average_velocity_pixels_per_second": 718.4215662305386,
+        "average_velocity_meters_per_second": 2.951930937121616,
+        "peak_velocity_pixels_per_second": 1693.7330173071261,
+        "peak_velocity_meters_per_second": 6.959399784233143,
+        "initial_velocity_pixels_per_second": 292.237252819246,
+        "initial_velocity_meters_per_second": 1.2007771315981597
+      }
+    },
+    {
+      "shot_number": 4,
+      "arm": "right",
+      "start_frame": 616,
+      "release_frame": 652,
+      "end_frame": 705,
+      "set": {
+        "frame": 616,
+        "elbow_angle": 105.55005245861453,
+        "hip_angle": 163.47941822474445,
+        "knee_angle": 167.5487737515548,
+        "wrist_position": {
+          "x": 398.3283805847168,
+          "y": 720.0037550926208,
+          "z": -0.12039072066545486
+        },
+        "ball_position": {
+          "x": 468.5481262207031,
+          "y": 797.9844360351562
+        },
+        "body_alignment": {
+          "torso_lean_angle": 10.007771992086285,
+          "shoulder_center": {
+            "x": 382.1383810043335,
+            "y": 646.1108386516571
+          },
+          "hip_center": {
+            "x": 363.74505043029785,
+            "y": 750.3419208526611
+          }
+        }
+      },
+      "release": {
+        "frame": 652,
+        "ball_frame": 649,
+        "ball_to_wrist_distance_pixels": 20.59517161118149,
+        "elbow_angle": 177.9813725612632,
+        "hip_angle": 168.03536006763895,
+        "knee_angle": 166.2477418872329,
+        "wrist_position": {
+          "x": 471.3621425628662,
+          "y": 495.1599133014679,
+          "z": -0.12158460915088654
+        },
+        "arm_extension_ratio": 0.9998448451510256,
+        "ball_position": {
+          "x": 448.18359375,
+          "y": 525.2194366455078
+        },
+        "release_height_pixels_from_top": 525.2194366455078,
+        "release_height_relative_to_hip": 196.1175479888916,
+        "ball_velocity_pixels_per_second": 670.0206339611623,
+        "ball_velocity_meters_per_second": 2.753055769577367
+      },
+      "follow_through": {
+        "frame": 705,
+        "elbow_angle": 158.38033027951224,
+        "hip_angle": 169.99337538182147,
+        "knee_angle": 177.68224707493775,
+        "wrist_position": {
+          "x": 303.66016387939453,
+          "y": 721.9527769088745,
+          "z": -0.11086303740739822
+        },
+        "arm_extension_ratio": 0.9823322384306292,
+        "balance": {
+          "horizontal_offset_pixels": 3.542933464050293,
+          "normalized_offset": 0.4299407113552528
+        }
+      },
+      "trajectory": {
+        "point_count": 90,
+        "average_velocity_pixels_per_second": 705.5528690866389,
+        "average_velocity_meters_per_second": 2.899054594031247,
+        "peak_velocity_pixels_per_second": 1536.3573978411678,
+        "peak_velocity_meters_per_second": 6.312757225480716,
+        "initial_velocity_pixels_per_second": 626.082192267615,
+        "initial_velocity_meters_per_second": 2.5725165827533525
+      }
+    }
+  ]
+}
