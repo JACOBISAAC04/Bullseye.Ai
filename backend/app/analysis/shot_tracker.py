@@ -194,12 +194,50 @@ class ShotTracker:
             d = max(ball["x2"] - ball["x1"], 1.0)
 
             hand_dist, closest_arm = self._closest_hand(pose_frames[i], x, y)
+            if 85 <= i + 1 <= 115:
+                pose = pose_frames[i]
+
+                print(
+                    f"POSE_CHECK frame={i + 1} "
+                    f"pose_detected={pose.get('pose_detected')} "
+                    f"left_wrist={pose.get('left_wrist')} "
+                    f"right_wrist={pose.get('right_wrist')} "
+                    f"hand_dist={hand_dist}"
+                )
 
             point = {
                 "frame": i + 1,
                 "x": x,
-                "y": y
+                "y": y,
+                "interpolated": bool(ball_frame.get("interpolated", False)),
+                "confidence": ball.get("confidence"),
             }
+            if 105 <= i + 1 <= 155:
+                print(
+                    f"FIRST_SHOT FRAME {i + 1}: "
+                    f"state={state}, "
+                    f"ball=({x:.1f}, {y:.1f}), "
+                    f"interpolated={point['interpolated']}, "
+                    f"hand_dist={hand_dist}"
+                )
+            if 255 <= i + 1 <= 280:
+                rim_x = rim["x"] if rim else None
+                rim_y = rim["y"] if rim else None
+
+                rim_distance = (
+                    self._distance(x, y, rim_x, rim_y)
+                    if rim is not None else None
+                )
+
+                print(
+                    f"FRAME {i + 1}: "
+                    f"state={state}, "
+                    f"ball=({x:.1f}, {y:.1f}), "
+                    f"rim=({rim_x}, {rim_y}), "
+                    f"rim_distance={rim_distance}, "
+                    f"interpolated={point['interpolated']}, "
+                    f"hand_distance={hand_dist}"
+                )
 
             if state == "WAITING":
 
@@ -312,10 +350,13 @@ class ShotTracker:
                     if heading_to_rim:
                         heading_pass_count += 1
 
+                observed_at_rim = not ball_frame.get("interpolated", False)
+
                 if (
                     near_rim
                     and flight_frames >= self.MIN_FLIGHT_FRAMES
                     and heading_to_rim
+                    and observed_at_rim
                 ):
 
                     current["end_frame"] = i + 1
@@ -339,8 +380,72 @@ class ShotTracker:
                         f"threshold={round(apex_y + self.FALL_LIMIT * d, 1)} "
                         f"frames_since_release={i - release_index}"
                     )
+                    
+                    # Diagnose whether a fall-reset flight ever approached the rim.
+                    release_point = next(
+                        (
+                            p for p in current["trajectory"]
+                            if p["frame"] == current["release_frame"]
+                        ),
+                        None,
+                    )
 
-                    if flight_frames >= self.MIN_SHOT_FLIGHT_FRAMES:
+                    observed_points = [
+                        p for p in current["trajectory"]
+                        if (
+                            p["frame"] >= current["release_frame"]
+                            and not p.get("interpolated", False)
+                        )
+                    ]
+                    release_distance = None
+                    closest_observed_distance = None
+                    if rim is not None and release_point is not None:
+                        release_distance = self._distance(
+                            release_point["x"],
+                            release_point["y"],
+                            rim["x"],
+                            rim["y"],
+                        )
+
+                        closest_observed_distance = min(
+                            (
+                                self._distance(
+                                    p["x"], p["y"], rim["x"], rim["y"]
+                                )
+                                for p in observed_points
+                            ),
+                            default=None,
+                        )
+
+                        print(
+                            f"FALL DIAGNOSTIC at frame {i + 1}: "
+                            f"release_rim_distance={release_distance:.1f}, "
+                            f"closest_observed_rim_distance="
+                            f"{closest_observed_distance}, "
+                            f"observed_flight_points={len(observed_points)}"
+                        )
+                    # Require observed progress toward the rim for fall-reset shots.
+                    approached_rim = False
+
+                    if (
+                        rim is not None
+                        and release_point is not None
+                        and closest_observed_distance is not None
+                        and release_distance > 0
+                    ):
+                        approach_ratio = closest_observed_distance / release_distance
+
+                        approached_rim = approach_ratio < self.HEADING_RATIO
+
+                        print(
+                            f"FALL APPROACH: ratio={approach_ratio:.3f}, "
+                            f"approached_rim={approached_rim}"
+                        )
+
+                    if (
+                        flight_frames >= self.MIN_SHOT_FLIGHT_FRAMES
+                        and approached_rim
+                    ):
 
                         flight_fall_kept_count += 1
 

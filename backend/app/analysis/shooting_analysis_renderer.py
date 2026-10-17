@@ -130,13 +130,31 @@ class ShootingAnalysisRenderer:
                 points = [p for p in shot["trajectory"] if p["frame"] <= frame_index]
 
                 for a, b in zip(points, points[1:]):
-                    cv2.line(
-                        frame,
-                        (int(a["x"]), int(a["y"])),
-                        (int(b["x"]), int(b["y"])),
-                        color,
-                        line_w,
+                    start = (int(a["x"]), int(a["y"]))
+                    end = (int(b["x"]), int(b["y"]))
+
+                    estimated = (
+                        a.get("interpolated", False)
+                        or b.get("interpolated", False)
                     )
+
+                    if estimated:
+                        self._draw_dashed_line(
+                            frame,
+                            start,
+                            end,
+                            color,
+                            line_w,
+                        )
+                    else:
+                        cv2.line(
+                            frame,
+                            start,
+                            end,
+                            color,
+                            line_w,
+                            cv2.LINE_AA,
+                        )
 
                 end = shot["end_frame"]
                 if points and (end is None or frame_index <= end):
@@ -181,6 +199,55 @@ class ShootingAnalysisRenderer:
         return output_path
 
     # ------------------------------------------------------------------
+    @staticmethod
+    def _draw_dashed_line(
+        frame,
+        start,
+        end,
+        color,
+        thickness,
+        dash_length=9,
+        gap_length=6,
+    ):
+        dx = end[0] - start[0]
+        dy = end[1] - start[1]
+
+        distance = math.hypot(dx, dy)
+
+        if distance == 0:
+            return
+
+        ux = dx / distance
+        uy = dy / distance
+
+        position = 0.0
+
+        while position < distance:
+            segment_end = min(
+                position + dash_length,
+                distance,
+            )
+
+            p1 = (
+                int(round(start[0] + ux * position)),
+                int(round(start[1] + uy * position)),
+            )
+
+            p2 = (
+                int(round(start[0] + ux * segment_end)),
+                int(round(start[1] + uy * segment_end)),
+            )
+
+            cv2.line(
+                frame,
+                p1,
+                p2,
+                color,
+                thickness,
+                cv2.LINE_AA,
+            )
+
+            position += dash_length + gap_length
     @staticmethod
     def _draw_skeleton(frame, pose_frame, scale, active_arm=None):
 

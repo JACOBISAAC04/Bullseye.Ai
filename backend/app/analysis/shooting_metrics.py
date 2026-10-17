@@ -124,6 +124,33 @@ class ShootingMetrics:
             pose_frames,
             arm
         )
+        
+        flight_points = [
+            p for p in shot["trajectory"]
+            if p["frame"] >= release_frame
+        ]
+
+        observed_flight_points = [
+            p for p in flight_points
+            if not p.get("interpolated", False)
+        ]
+
+        observed_pairs = sum(
+            1
+            for a, b in zip(flight_points, flight_points[1:])
+            if (
+                not a.get("interpolated", False)
+                and not b.get("interpolated", False)
+                and b["frame"] - a["frame"] == 1
+            )
+        )
+
+        print(
+            f"TRAJECTORY DIAGNOSTIC Shot {shot['shot_number']}: "
+            f"flight_points={len(flight_points)}, "
+            f"observed_flight_points={len(observed_flight_points)}, "
+            f"consecutive_observed_pairs={observed_pairs}"
+        )
 
         trajectory_metrics = self._calculate_trajectory(
             shot["trajectory"],
@@ -309,32 +336,33 @@ class ShootingMetrics:
         fps,
         pixels_per_meter
     ):
-
-        empty = {"pixels_per_second": None, "meters_per_second": None}
+        empty = {
+            "pixels_per_second": None,
+            "meters_per_second": None
+        }
 
         if ball_frame is None:
             return empty
 
         selected_index = ball_frame - 1
 
-        if (
-            selected_index < 0
-            or selected_index >= len(ball_frames)
-        ):
+        if not (0 <= selected_index < len(ball_frames)):
             return empty
 
         selected = ball_frames[selected_index]
 
-        if not selected.get("ball_detected"):
+        # Never calculate an observed velocity from an estimated ball position.
+        if (
+            not selected.get("ball_detected")
+            or selected.get("interpolated", False)
+        ):
             return empty
 
         selected_ball = selected["ball"]
 
-        previous = None
-        previous_frame = None
-
+        # Prefer a previous observed position, preserving the existing
+        # backward-looking velocity calculation.
         for offset in range(1, 11):
-
             index = selected_index - offset
 
             if index < 0:
@@ -342,76 +370,67 @@ class ShootingMetrics:
 
             candidate = ball_frames[index]
 
-            if candidate.get("ball_detected"):
+            if (
+                not candidate.get("ball_detected")
+                or candidate.get("interpolated", False)
+            ):
+                continue
 
-                previous = candidate["ball"]
-                previous_frame = index + 1
+            previous = candidate["ball"]
+
+            distance = self._distance(
+                previous["x"],
+                previous["y"],
+                selected_ball["x"],
+                selected_ball["y"]
+            )
+
+            px_per_sec = (distance / offset) * fps
+
+            return {
+                "pixels_per_second": px_per_sec,
+                "meters_per_second": (
+                    px_per_sec / pixels_per_meter
+                    if pixels_per_meter else None
+                )
+            }
+
+        # Fall back to a following observed position if there is no
+        # usable previous observation.
+        for offset in range(1, 11):
+            index = selected_index + offset
+
+            if index >= len(ball_frames):
                 break
 
-        px_per_sec = None
+            candidate = ball_frames[index]
 
-        if previous is not None:
+            if (
+                not candidate.get("ball_detected")
+                or candidate.get("interpolated", False)
+            ):
+                continue
 
-            frame_difference = ball_frame - previous_frame
+            following = candidate["ball"]
 
-            if frame_difference > 0:
+            distance = self._distance(
+                selected_ball["x"],
+                selected_ball["y"],
+                following["x"],
+                following["y"]
+            )
 
-                distance = self._distance(
-                    previous["x"],
-                    previous["y"],
-                    selected_ball["x"],
-                    selected_ball["y"]
+            px_per_sec = (distance / offset) * fps
+
+            return {
+                "pixels_per_second": px_per_sec,
+                "meters_per_second": (
+                    px_per_sec / pixels_per_meter
+                    if pixels_per_meter else None
                 )
+            }
 
-                px_per_sec = (distance / frame_difference) * fps
-
-        if px_per_sec is None:
-
-            following = None
-            following_frame = None
-
-            for offset in range(1, 11):
-
-                index = selected_index + offset
-
-                if index >= len(ball_frames):
-                    break
-
-                candidate = ball_frames[index]
-
-                if candidate.get("ball_detected"):
-
-                    following = candidate["ball"]
-                    following_frame = index + 1
-                    break
-
-            if following is not None:
-
-                frame_difference = following_frame - ball_frame
-
-                if frame_difference > 0:
-
-                    distance = self._distance(
-                        selected_ball["x"],
-                        selected_ball["y"],
-                        following["x"],
-                        following["y"]
-                    )
-
-                    px_per_sec = (distance / frame_difference) * fps
-
-        if px_per_sec is None:
-            return empty
-
-        m_per_sec = None
-
-        if pixels_per_meter:
-            m_per_sec = px_per_sec / pixels_per_meter
-
-        return {
-            "pixels_per_second": px_per_sec,
-            "meters_per_second": m_per_sec
-        }
+        return empty
 
     def _calculate_follow_through(
         self,
@@ -529,39 +548,27 @@ class ShootingMetrics:
         pose_frames,
         wrist_key
     ):
+        index = release_frame - 1
 
-        release_index = release_frame - 1
-
-        candidates = []
-
-        search_radius = 10
-
-        for offset in range(
-            -search_radius,
-            search_radius + 1
+        if (
+            index < 0
+            or index >= len(ball_frames)
+            or index >= len(pose_frames)
         ):
+            return None, None, None
 
-            index = release_index + offset
+        ball_frame = ball_frames[index]
+        pose_frame = pose_frames[index]
 
-            if index < 0 or index >= len(ball_frames):
-                continue
+        if not ball_frame.get("ball_detected"):
+            return None, None, None
 
-            ball_frame = ball_frames[index]
-            pose_frame = pose_frames[index]
+        ball = ball_frame["ball"]
+        wrist = pose_frame.get(wrist_key)
 
-            if not ball_frame.get("ball_detected"):
-                continue
+        distance = None
 
-            if not pose_frame.get("pose_detected"):
-                continue
-
-            ball = ball_frame["ball"]
-
-            wrist = pose_frame.get(wrist_key)
-
-            if wrist is None:
-                continue
-
+        if wrist is not None:
             distance = self._distance(
                 ball["x"],
                 ball["y"],
@@ -569,31 +576,7 @@ class ShootingMetrics:
                 wrist["y"]
             )
 
-            temporal_distance = abs(offset)
-
-            score = distance + temporal_distance * 3
-
-            candidates.append(
-                {
-                    "frame": index + 1,
-                    "ball": ball,
-                    "distance": distance,
-                    "score": score
-                }
-            )
-
-        if not candidates:
-            return None, None, None
-
-        candidates.sort(key=lambda x: x["score"])
-
-        selected = candidates[0]
-
-        return (
-            selected["ball"],
-            selected["frame"],
-            selected["distance"]
-        )
+        return ball, release_frame, distance
 
     def _get_ball_position(
         self,
