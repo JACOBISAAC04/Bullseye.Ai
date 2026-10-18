@@ -1,0 +1,41 @@
+{
+  "coach": "SeeMikeDunn",
+  "description": "Publicly described coaching topics, not angle targets or an endorsement.",
+  "official_endorsement": false,
+  "source": {
+    "title": "Ground Up 3.0 — SeeMikeDunn",
+    "url": "https://seemikedunn.com/product/ground-up-3-0-video-course/"
+  },
+  "principles": [
+    {
+      "id": "preparation",
+      "name": "Preparation and posture",
+      "intended_form": "Purposeful preparation of posture and the ball before the shooting motion.",
+      "evidence_required": "Set-phase posture and repeated frames; single-frame angles alone cannot establish correctness."
+    },
+    {
+      "id": "connection",
+      "name": "Connection and sequencing",
+      "intended_form": "A coordinated, repeatable shooting motion and power sequence.",
+      "evidence_required": "Time-aligned joint and ball motion, beyond phase-summary angles."
+    },
+    {
+      "id": "balance",
+      "name": "Balance and body control",
+      "intended_form": "Controlled balance during shooting and follow-through.",
+      "evidence_required": "Multiple frames and an appropriate camera view; a single 2D offset alone is not a pass/fail test."
+    },
+    {
+      "id": "guide_hand",
+      "name": "Guide-hand mechanics",
+      "intended_form": "Effective guide-hand contribution during the shooting motion.",
+      "evidence_required": "Detailed visibility of both hands and the ball; current pose metrics are insufficient."
+    }
+  ],
+  "limitations": [
+    "These are qualitative topics, not numerical targets.",
+    "Comparisons are descriptive and do not claim a player violates the coach's recommendations.",
+    "Two shots are insufficient to rate long-term consistency.",
+    "Derived outputs are not officially endorsed by SeeMikeDunn."
+  ]
+}
