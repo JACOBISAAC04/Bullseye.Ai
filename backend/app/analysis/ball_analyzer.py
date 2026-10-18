@@ -4,9 +4,10 @@ from ultralytics import YOLO
 
 class BallAnalyzer:
 
-    def __init__(self):
+    def __init__(self, imgsz=640):
         self.model = YOLO("app/models/ball_detector/ball.pt")
         self.ball_class = 0
+        self.imgsz = imgsz
 
     def analyze_video(self, video_path):
         cap = cv2.VideoCapture(video_path)
@@ -29,7 +30,7 @@ class BallAnalyzer:
 
             results = self.model(
                 frame,
-                imgsz=640,
+                imgsz=self.imgsz,
                 conf=0.25,
                 classes=[self.ball_class],
                 max_det=1,
