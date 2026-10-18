@@ -171,7 +171,7 @@ class ShootingAnalysisRenderer:
             if shot_idx is not None:
                 shot = shots[shot_idx]
                 arm = shot.get("arm", "?")
-                lines.append(f"Shot {shot['shot_number']} ({arm})  Phase: {phase}")
+                lines.append(f"Shot {shot['shot_number']} ({arm}) | {phase}")
 
                 if shot_idx < len(metric_shots):
                     m = metric_shots[shot_idx]
@@ -455,124 +455,210 @@ class ShootingAnalysisRenderer:
 
     @staticmethod
     def _build_shot_summary(shot, metrics, pixels_per_meter=None):
-        """One shot's compact summary card: release-moment elbow/hip/knee
-        angles and release speed. Built once per shot up front, since the
-        underlying metrics never change once computed."""
+        """Cache release metrics for an easy-to-read two-column shot card.
 
-        arm = shot.get("arm", "?")
+        The raw metric values and underlying shot tracking are untouched.
+        Missing measurements remain absent rather than being invented.
+        """
         release = metrics.get("release", {}) if metrics else {}
+        return {
+            "title": f"Shot {shot['shot_number']}  /  {str(shot.get('arm', '?')).title()}",
+            "elbow": release.get("elbow_angle"),
+            "hip": release.get("hip_angle"),
+            "knee": release.get("knee_angle"),
+            "speed": release.get("ball_velocity_meters_per_second"),
+            "color": shot.get("color", (0, 255, 0)),
+        }
 
-        elbow = release.get("elbow_angle")
-        hip = release.get("hip_angle")
-        knee = release.get("knee_angle")
-        speed = release.get("ball_velocity_meters_per_second")
-
-        lines = [f"Shot {shot['shot_number']} ({arm})"]
-
-        angle_bits = []
-        if elbow is not None:
-            angle_bits.append(f"Elbow:{elbow:.0f}")
-        if hip is not None:
-            angle_bits.append(f"Hip:{hip:.0f}")
-        if knee is not None:
-            angle_bits.append(f"Knee:{knee:.0f}")
-
-        if angle_bits:
-            lines.append("  ".join(angle_bits))
-
-        if speed is not None:
-            lines.append(f"Speed: {speed:.2f} m/s")
-
-        return lines
+    @staticmethod
+    def _put_fitted_text(
+        frame, text, x, baseline, available_width, font_size,
+        color, min_font_size=0.32,
+    ):
+        """Draw light, anti-aliased text without overflowing its column."""
+        if not text or available_width < 5:
+            return
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        desired_width = cv2.getTextSize(text, font, font_size, 1)[0][0]
+        if desired_width > available_width:
+            font_size = max(
+                min_font_size,
+                font_size * available_width / desired_width,
+            )
+        # Stop rather than paint text into a neighboring column.
+        if cv2.getTextSize(text, font, font_size, 1)[0][0] > available_width:
+            return
+        cv2.putText(
+            frame, text, (int(x), int(baseline)), font,
+            font_size, color, 1, cv2.LINE_AA,
+        )
 
     @staticmethod
     def _draw_summary_boxes(frame, summaries, scale, width):
-        """Draws one bordered card per completed shot, stacked top-to-
-        bottom in the top-right corner. A card appears the instant its
-        shot's end_frame is reached and then stays for every frame after
-        that -- including through every later shot -- since `summaries`
-        only ever grows as more shots complete."""
+        """Persistent, roomy two-column release cards in the upper-right.
 
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        title_scale = 0.48 * scale
-        text_scale = 0.42 * scale
-        step = int(20 * scale)
-        pad = int(10 * scale)
-        gap = int(8 * scale)
-        border_w = max(1, int(round(1 * scale)))
+        432p cards are ~226px wide. They display angles in two short rows,
+        with speed on a separate row only when that metric is available.
+        """
+        ui = max(1.0, scale)
+        h = frame.shape[0]
+        margin = max(10, int(round(12 * ui)))
+        gap = max(7, int(round(8 * ui)))
+        card_width = min(int(round(226 * ui)), width - 2 * margin)
+        if card_width < 120:
+            return
 
-        y = int(15 * scale)
-        margin_right = int(15 * scale)
+        title_fs = 0.48 * ui
+        body_fs = 0.46 * ui
 
-        for lines in summaries:
+        y = max(10, int(round(12 * ui)))
+        x1 = width - margin
+        x0 = x1 - card_width
 
-            widest = 0
-            for i, text in enumerate(lines):
-                fs = title_scale if i == 0 else text_scale
-                (tw, _), _ = cv2.getTextSize(text, font, fs, 1)
-                widest = max(widest, tw)
+        for summary in summaries:
+            has_speed = summary.get("speed") is not None
+            card_height = int(round((111 if has_speed else 82) * ui))
+            y1 = y + card_height
 
-            box_w = widest + 2 * pad
-            box_h = step * len(lines) + pad
+            # Avoid covering the lower-left panel / extending below frame.
+            if y1 > h - margin:
+                break
 
-            x1 = width - margin_right
-            x0 = x1 - box_w
-            y0 = y
-            y1 = y0 + box_h
+            roi = frame[y:y1, x0:x1]
+            dark = roi.copy()
+            dark[:] = (16, 19, 22)
+            cv2.addWeighted(dark, 0.89, roi, 0.11, 0, roi)
 
-            overlay = frame.copy()
-            cv2.rectangle(overlay, (x0, y0), (x1, y1), (0, 0, 0), -1)
-            cv2.addWeighted(overlay, 0.55, frame, 0.45, 0, frame)
+            # Subtle gray edge, plus a short accent keyed to the shot path.
             cv2.rectangle(
-                frame, (x0, y0), (x1, y1), SUMMARY_BOX_BORDER, border_w
+                frame, (x0, y), (x1 - 1, y1 - 1),
+                (91, 99, 105), 1, cv2.LINE_AA,
+            )
+            raw_color = summary.get("color", (0, 255, 0))
+            if isinstance(raw_color, (list, tuple)) and len(raw_color) >= 3:
+                accent = tuple(int(max(0, min(255, channel))) for channel in raw_color[:3])
+            else:
+                accent = (0, 190, 120)
+
+            cv2.line(
+                frame,
+                (x0 + int(round(11 * ui)), y + int(round(8 * ui))),
+                (x0 + int(round(11 * ui)), y + int(round(23 * ui))),
+                accent, max(2, int(round(2 * ui))), cv2.LINE_AA,
             )
 
-            for i, text in enumerate(lines):
-                fs = title_scale if i == 0 else text_scale
-                thick = 2 if i == 0 else 1
-                ty = y0 + step * (i + 1) - int(4 * scale)
-                cv2.putText(
-                    frame, text, (x0 + pad, ty), font, fs,
-                    WHITE, thick, cv2.LINE_AA,
+            pad = int(round(23 * ui))
+            right_pad = int(round(12 * ui))
+            col_gap = int(round(8 * ui))
+            body_left = x0 + int(round(13 * ui))
+            body_width = card_width - int(round(26 * ui))
+            col_width = (body_width - col_gap) // 2
+            col_right = body_left + col_width + col_gap
+
+            ShootingAnalysisRenderer._put_fitted_text(
+                frame,
+                summary["title"],
+                x0 + pad,
+                y + int(round(21 * ui)),
+                card_width - pad - right_pad,
+                title_fs,
+                (238, 240, 242),
+            )
+
+            divider_y = y + int(round(29 * ui))
+            cv2.line(
+                frame, (body_left, divider_y),
+                (x1 - int(round(13 * ui)), divider_y),
+                (65, 72, 77), 1, cv2.LINE_AA,
+            )
+
+            def angle_text(label, value):
+                return f"{label} {value:.0f}" if value is not None else None
+
+            first_row = y + int(round(49 * ui))
+            second_row = y + int(round(72 * ui))
+            body_color = (225, 230, 233)
+
+            for label, value, xx, baseline in (
+                ("Elbow", summary.get("elbow"), body_left, first_row),
+                ("Hip", summary.get("hip"), col_right, first_row),
+                ("Knee", summary.get("knee"), body_left, second_row),
+            ):
+                text = angle_text(label, value)
+                if text is not None:
+                    ShootingAnalysisRenderer._put_fitted_text(
+                        frame, text, xx, baseline, col_width, body_fs,
+                        body_color,
+                    )
+
+            if has_speed:
+                ShootingAnalysisRenderer._put_fitted_text(
+                    frame,
+                    f"Speed {summary['speed']:.2f} m/s",
+                    body_left,
+                    y + int(round(96 * ui)),
+                    body_width,
+                    body_fs,
+                    body_color,
                 )
 
             y = y1 + gap
 
     @staticmethod
     def _draw_panel(frame, lines, scale, height):
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        title_scale = 0.65 * scale
-        text_scale = 0.5 * scale
-        step = int(26 * scale)
-        pad = int(12 * scale)
+        """More legible lower-left info panel with restrained text weight."""
+        if not lines:
+            return
 
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        ui = max(1.0, scale)
+        title_size = 0.49 * ui
+        text_size = 0.46 * ui
+        line_h = int(round(22 * ui))
+        pad_x = int(round(12 * ui))
+        pad_y = int(round(11 * ui))
+        margin = int(round(12 * ui))
+        width = frame.shape[1]
+
+        max_w = min(int(round(350 * ui)), width - 2 * margin)
+        available_text_w = max_w - 2 * pad_x
+
+        sizes = []
         widest = 0
         for i, text in enumerate(lines):
-            fs = title_scale if i == 0 else text_scale
-            (tw, _), _ = cv2.getTextSize(text, font, fs, 1)
-            widest = max(widest, tw)
+            font_size = title_size if i == 0 else text_size
+            tw = cv2.getTextSize(text, font, font_size, 1)[0][0]
+            if tw > available_text_w:
+                font_size *= available_text_w / tw
+            sizes.append(font_size)
+            widest = max(
+                widest,
+                cv2.getTextSize(text, font, font_size, 1)[0][0],
+            )
 
-        panel_w = widest + 2 * pad
-        panel_h = step * len(lines) + pad
+        panel_w = min(max_w, widest + 2 * pad_x)
+        panel_h = line_h * len(lines) + 2 * pad_y
 
-        x0 = int(15 * scale)
-        y1 = height - int(15 * scale)          # bottom-left, clear of the rim
-        y0 = y1 - panel_h
+        x0 = margin
+        x1 = min(width - 1, x0 + panel_w)
+        y1 = height - margin
+        y0 = max(0, y1 - panel_h)
+        if y0 >= y1 or x0 >= x1:
+            return
 
-        overlay = frame.copy()
-        cv2.rectangle(overlay, (x0, y0), (x0 + panel_w, y1), (0, 0, 0), -1)
-        cv2.addWeighted(overlay, 0.6, frame, 0.4, 0, frame)
+        roi = frame[y0:y1, x0:x1]
+        dark = roi.copy()
+        dark[:] = (16, 19, 22)
+        cv2.addWeighted(dark, 0.88, roi, 0.12, 0, roi)
+        cv2.rectangle(
+            frame, (x0, y0), (x1, y1),
+            (88, 94, 99), 1, cv2.LINE_AA,
+        )
 
-        for i, text in enumerate(lines):
-            fs = title_scale if i == 0 else text_scale
-            thick = 2 if i == 0 else 1
+        for i, (text, font_size) in enumerate(zip(lines, sizes)):
+            baseline = y0 + pad_y + (i + 1) * line_h - int(round(5 * ui))
+            color = (235, 238, 242) if i == 0 else (226, 231, 234)
             cv2.putText(
-                frame,
-                text,
-                (x0 + pad, y0 + step * (i + 1) - int(6 * scale)),
-                font,
-                fs,
-                WHITE,
-                thick,
-                cv2.LINE_AA,
+                frame, text, (x0 + pad_x, baseline),
+                font, font_size, color, 1, cv2.LINE_AA,
             )
