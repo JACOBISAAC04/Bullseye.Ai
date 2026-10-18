@@ -2,6 +2,8 @@ import cv2
 import mediapipe as mp
 import math
 import os
+import json
+from pathlib import Path
 
 
 class PoseAnalyzer:
@@ -36,7 +38,61 @@ class PoseAnalyzer:
 
         return angle
 
-    def analyze_video(self, video_path):
+
+    @staticmethod
+    def load_player_boxes(json_path, video_path, width, height, total_frames):
+        with open(json_path, "r", encoding="utf-8") as file:
+            data = json.load(file)
+
+        info = data["video"]
+
+        if (
+            info["filename"] != Path(video_path).name
+            or info["width"] != width
+            or info["height"] != height
+            or info["frame_count"] != total_frames
+        ):
+            raise ValueError(
+                "YOLO26 detections do not match the selected video"
+            )
+
+        boxes = {}
+        last_box = None
+        last_frame = None
+
+        for entry in sorted(data["frames"], key=lambda e: e["frame"]):
+            frame_number = entry["frame"]
+
+            people = [
+                detection
+                for detection in entry["detections"]
+                if detection["class_id"] == 0
+            ]
+
+            if people:
+                best = max(
+                    people,
+                    key=lambda detection: detection["confidence"],
+                )
+
+                box = best["bbox_xyxy"]
+
+                if len(box) == 4 and box[2] > box[0] and box[3] > box[1]:
+                    last_box = box
+                    last_frame = frame_number
+                    boxes[frame_number] = box
+
+            elif (
+                last_box is not None
+                and frame_number - last_frame <= 2
+            ):
+                # Carry the last observed box across brief gaps.
+                boxes[frame_number] = last_box
+
+        return boxes
+
+
+    def analyze_video(self, video_path, player_detections_path=None):
         cap = cv2.VideoCapture(video_path)
 
         if not cap.isOpened():
@@ -53,6 +109,21 @@ class PoseAnalyzer:
 
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+        player_boxes = None
+
+        if player_detections_path is not None:
+            player_boxes = self.load_player_boxes(
+                player_detections_path,
+                video_path,
+                width,
+                height,
+                int(cap.get(cv2.CAP_PROP_FRAME_COUNT)),
+            )
+
+            print(
+                f"YOLO26 player boxes loaded: {len(player_boxes)} frames"
+            )
 
         output_dir = "data/analyzed"
         os.makedirs(output_dir, exist_ok=True)
@@ -87,9 +158,65 @@ class PoseAnalyzer:
 
             results = self.pose.process(rgb_frame)
 
+
+            # Phase 2: use cloud-generated YOLO26 player boxes
+            # only when full-frame MediaPipe fails.
+            if (
+                results.pose_landmarks is None
+                and player_boxes is not None
+            ):
+                bbox = player_boxes.get(frame_count)
+
+                if bbox is not None:
+                    x1, y1, x2, y2 = bbox
+
+                    box_width = x2 - x1
+                    box_height = y2 - y1
+
+                    # Give MediaPipe room for hands and raised arms.
+                    pad_x = box_width * 0.75
+                    pad_y = box_height * 0.25
+
+                    crop_x0 = max(0, int(x1 - pad_x))
+                    crop_y0 = max(0, int(y1 - pad_y))
+                    crop_x1 = min(width, int(x2 + pad_x))
+                    crop_y1 = min(height, int(y2 + pad_y))
+
+                    crop_width = crop_x1 - crop_x0
+                    crop_height = crop_y1 - crop_y0
+
+                    if crop_width > 0 and crop_height > 0:
+                        cropped_rgb = rgb_frame[
+                            crop_y0:crop_y1,
+                            crop_x0:crop_x1,
+                        ]
+
+                        cropped_results = self.crop_pose.process(
+                            cropped_rgb
+                        )
+
+                        if cropped_results.pose_landmarks is not None:
+                            for landmark in (
+                                cropped_results.pose_landmarks.landmark
+                            ):
+                                landmark.x = (
+                                    crop_x0 + landmark.x * crop_width
+                                ) / width
+
+                                landmark.y = (
+                                    crop_y0 + landmark.y * crop_height
+                                ) / height
+
+                                landmark.z *= crop_width / width
+
+                            results = cropped_results
+
+
+
+
             # Temporary player-region fallback for video3.mp4.
             # The player is on the right side of this particular video.
-            if results.pose_landmarks is None:
+            if results.pose_landmarks is None and player_boxes is None:
                 x0 = int(width * 0.52)
                 y0 = int(height * 0.30)
 
@@ -115,8 +242,7 @@ class PoseAnalyzer:
 
                     results = cropped_results
 
-                    if 85 <= frame_count <= 115:
-                        print(f"CROP_RECOVERED frame={frame_count}")
+
 
             frame_data = {
                 "frame": frame_count,
