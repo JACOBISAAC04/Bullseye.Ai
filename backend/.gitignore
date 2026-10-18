@@ -2,17 +2,33 @@
 __pycache__/
 *.pyc
 .env
-backend/data/analyzed/
-backend/data/ball_dataset/
-backend/data/ball_frames/
-backend/runs/
+
+# Local model weights downloaded by experimentation
 yolov8*.pt
 yolo11*.pt
+yolo26*.pt
+
+# Binary result archives (Colab ZIPs should be imported, not checked in)
 *.zip
 
-# keep only the test videos
-backend/data/videos/*
-!backend/data/videos/video8.mp4
-!backend/data/videos/529423d1-*.mp4
-!backend/data/videos/gettyimages-474378156-640_adpp.mp4
-!backend/data/videos/gettyimages-475129293-640_adpp.mp4
+# Generated analysis and training artifacts (paths relative to backend/.gitignore)
+/data/analyzed/
+/data/ball_dataset/
+/data/ball_frames/
+/runs/
+
+# Local diagnostics and Phase 1 backup (not production code)
+/app/analysis/shot_tracker_phase1_backup.py
+/create_contact_sheet.py
+/diagnose_video8_flight.py
+/video8_flight_diagnostic.csv
+
+# Exclude new uploaded videos but preserve intentionally selected test fixtures
+/data/videos/*
+!/data/videos/video8.mp4
+!/data/videos/529423d1-*.mp4
+!/data/videos/gettyimages-474378156-640_adpp.mp4
+!/data/videos/gettyimages-475129293-640_adpp.mp4
+
+# Jupyter local caches
+.ipynb_checkpoints/

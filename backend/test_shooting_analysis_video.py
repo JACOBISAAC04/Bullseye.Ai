@@ -35,7 +35,14 @@ shooting_metrics = ShootingMetrics()
 renderer = ShootingAnalysisRenderer()
 
 print("Analyzing pose...")
-pose_result = pose_analyzer.analyze_video(video_path)
+player_detections_path = (
+    sys.argv[2] if len(sys.argv) > 2 else None
+)
+
+pose_result = pose_analyzer.analyze_video(
+    video_path,
+    player_detections_path=player_detections_path,
+)
 
 print("Analyzing ball...")
 ball_result = ball_analyzer.analyze_video(video_path)
