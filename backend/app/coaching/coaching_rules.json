@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0",
+  "purpose": "Source-linked coaching topics; no automated correctness targets",
+  "coach": "Mike Dunn (SeeMikeDunn)",
+  "official_endorsement": false,
+  "sources": [
+    {
+      "id": "ground_up_outline",
+      "title": "Ground Up 3.0 curriculum outline",
+      "url": "https://seemikedunn.com/product/ground-up-3-0-video-course/",
+      "scope": "Public course description and topic outline only; paid lesson content has not been reviewed"
+    },
+    {
+      "id": "dunn_interview",
+      "title": "Interview with basketball shooting coach Mike Dunn (transcript)",
+      "url": "https://www.hustletraining.com/blog/how-to-shoot-with-perfect-form-from-professional-shooting-coach-mike-dunn",
+      "scope": "Public interview statements attributed to Mike Dunn"
+    }
+  ],
+  "rules": [
+    {
+      "id": "preparation",
+      "title": "Preparation and posture",
+      "source_ids": [
+        "ground_up_outline",
+        "dunn_interview"
+      ],
+      "source_backed_principle": "Preparation, posture, and how the ball is held before shooting are coaching topics.",
+      "available_evidence": "set-phase joint angles and torso lean",
+      "required_to_judge": "Time-resolved posture, ball placement relative to body, camera perspective, verified landmarks.",
+      "review_prompt": "Review each set-phase frame for preparation and ball position; do not correct posture from one 2D angle alone."
+    },
+    {
+      "id": "connection",
+      "title": "Connection and sequencing",
+      "source_ids": [
+        "ground_up_outline"
+      ],
+      "source_backed_principle": "The curriculum explicitly covers connection, sequencing, and creation of power.",
+      "available_evidence": "shot-to-shot release angle differences only",
+      "required_to_judge": "Time-aligned leg, arm, and ball motion, validated tracking across frames.",
+      "review_prompt": "Compare the motion leading into each release frame; release angles alone cannot determine sequencing."
+    },
+    {
+      "id": "balance",
+      "title": "Balance and body control",
+      "source_ids": [
+        "ground_up_outline",
+        "dunn_interview"
+      ],
+      "source_backed_principle": "The curriculum and public interview discuss balance and posture.",
+      "available_evidence": "2D follow-through balance offset",
+      "required_to_judge": "Camera-calibrated, multi-frame body stability and reliable floor/foot information.",
+      "review_prompt": "Inspect multi-frame balance and landings; a single 2D offset is not a balance grade."
+    },
+    {
+      "id": "guide_hand",
+      "title": "Guide-hand mechanics",
+      "source_ids": [
+        "ground_up_outline",
+        "dunn_interview"
+      ],
+      "source_backed_principle": "The curriculum includes the guide hand; Dunn's interview discusses shooting-hand position and guide-hand involvement.",
+      "available_evidence": "no reliable guide-hand contact or finger-action metric",
+      "required_to_judge": "Close-up hand and ball evidence covering the release, preferably a suitable camera view.",
+      "review_prompt": "Obtain clearer hand and ball footage before assessing guide-hand involvement."
+    }
+  ],
+  "restrictions": [
+    "No target joint angles are specified or inferred.",
+    "A large observed difference does not establish incorrect mechanics.",
+    "No specific corrective drill is prescribed without verified video evidence.",
+    "Current phase-summary metrics do not establish ball-hand contact, fine wrist action, or movement sequencing.",
+    "The tool is independent and is not endorsed by SeeMikeDunn."
+  ]
+}

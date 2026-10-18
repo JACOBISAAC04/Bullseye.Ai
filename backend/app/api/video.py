@@ -9,6 +9,7 @@ from uuid import UUID, uuid4
 from fastapi import APIRouter, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from starlette.concurrency import run_in_threadpool
+from app.coaching.coaching_pipeline import CoachingReportPipeline
 
 from app.analysis.pose_analyzer import PoseAnalyzer
 from app.analysis.shooting_phase_detector import ShootingPhaseDetector
@@ -251,6 +252,39 @@ def run_full_analysis(video_path: Path, job_id: str):
         )
 
     # -------------------------------------------
+    # PHASE 4: EVIDENCE-AWARE COACHING REPORT
+    # -------------------------------------------
+
+    print(
+        "Generating shooting-form comparison...",
+        flush=True,
+    )
+
+    coaching_path = output_dir / "coaching_report.json"
+
+    coaching_report = CoachingReportPipeline().analyze({
+        "analysis": pose_result,
+        "metrics": metrics_result,
+    })
+
+    if coaching_report["shot_count"] != len(shot_result["shots"]):
+        raise RuntimeError(
+            "Coaching shot count does not match tracked shots"
+        )
+
+    with coaching_path.open("w", encoding="utf-8") as file:
+        json.dump(
+            coaching_report,
+            file,
+            indent=2,
+        )
+
+    print(
+        "Coaching report generated successfully.",
+        flush=True,
+    )
+
+    # -------------------------------------------
     # PREPARE SHOT SUMMARY
     # -------------------------------------------
 
@@ -318,11 +352,15 @@ def run_full_analysis(video_path: Path, job_id: str):
         "shot_count": len(shots),
         "shots": shots,
         "metrics": metrics_result,
-        "processing_time_seconds": round(
-            total_time,
-            2,
-        ),
+        "processing_time_seconds": round(total_time, 2),
         "stage_timings": timings,
+        "coaching_summary": {
+            "intended_form_match": coaching_report["intended_form_match"],
+            "first_review_suggestion": coaching_report[
+                "first_review_suggestion"
+            ],
+            "shots": coaching_report["shots"],
+        },
     }
 
 
@@ -437,6 +475,7 @@ async def analyze_video(
         "metrics_url": (
             f"/video/results/{job_id}/metrics"
         ),
+        "coaching_url": f"/video/results/{job_id}/coaching",
     }
 
 
@@ -497,4 +536,24 @@ def download_metrics(
         filename=(
             f"{job_id}_metrics.json"
         ),
+    )
+
+@router.get("/results/{job_id}/coaching")
+def download_coaching_report(job_id: UUID):
+    path = (
+        ANALYZED_DIR
+        / str(job_id)
+        / "coaching_report.json"
+    )
+
+    if not path.is_file():
+        raise HTTPException(
+            status_code=404,
+            detail="Coaching report not found",
+        )
+
+    return FileResponse(
+        path,
+        media_type="application/json",
+        filename=f"{job_id}_coaching_report.json",
     )
