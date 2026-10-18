@@ -1,8 +1,8 @@
-
 import time
 import json
 import logging
 import shutil
+from copy import deepcopy
 from pathlib import Path
 from uuid import UUID, uuid4
 
@@ -10,6 +10,7 @@ from fastapi import APIRouter, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from starlette.concurrency import run_in_threadpool
 from app.coaching.coaching_pipeline import CoachingReportPipeline
+from app.coaching.measurement_coaching_pipeline import MeasurementCoachingPipeline
 
 from app.analysis.pose_analyzer import PoseAnalyzer
 from app.analysis.shooting_phase_detector import ShootingPhaseDetector
@@ -24,6 +25,11 @@ from app.analysis.shooting_metrics import ShootingMetrics
 from app.analysis.shooting_analysis_renderer import ShootingAnalysisRenderer
 
 from tools.detect_yolo26_local import detect_video
+
+from app.coaching.ball_observation_store import (
+    build_ball_observation_report,
+    save_report,
+)
 
 
 router = APIRouter(prefix="/video", tags=["Video"])
@@ -138,13 +144,20 @@ def run_full_analysis(video_path: Path, job_id: str):
         str(video_path)
     )
 
-    # Remove unrealistic basketball detections.
+    # Preserve direct detector predictions before outlier filtering.
+    # remove_ball_outliers() mutates the frames it receives.
+    raw_ball_frames = deepcopy(ball_result["frames"])
+
+    # Keep existing tracking filter settings unchanged.
     ball_result["frames"] = remove_ball_outliers(
         ball_result["frames"],
         max_speed_factor=3.0,
     )
 
-    # Interpolate missing basketball positions.
+    # These are accepted detector predictions, before interpolation.
+    filtered_ball_frames = deepcopy(ball_result["frames"])
+
+    # Preserve the existing interpolated stream for shot tracking.
     ball_result["frames"] = interpolate_ball_gaps(
         ball_result["frames"],
         max_gap=35,
@@ -189,6 +202,29 @@ def run_full_analysis(video_path: Path, job_id: str):
     )
 
     report_time("SHOT_TRACKING")
+
+    # -------------------------------------------
+    # PHASE 5.4: DETECTOR BALL OBSERVATION EVIDENCE
+    # -------------------------------------------
+
+    ball_observations = build_ball_observation_report(
+        raw_ball_frames,
+        filtered_ball_frames,
+        shot_result["shots"],
+        fps=ball_result["fps"],
+    )
+
+    ball_observations_path = output_dir / "ball_observations.json"
+    save_report(ball_observations, ball_observations_path)
+
+    print(
+        "Ball observations saved:",
+        ball_observations["accepted_observation_count"],
+        "accepted detections;",
+        ball_observations["rejected_outlier_count"],
+        "rejected outliers",
+        flush=True,
+    )
 
     # -------------------------------------------
     # STAGE 6: SHOOTING METRICS
@@ -303,6 +339,57 @@ def run_full_analysis(video_path: Path, job_id: str):
     ]
 
     # -------------------------------------------
+    # PHASE 5: MEASUREMENT-BACKED COACHING
+    # -------------------------------------------
+    # Reuse in-memory pose/metrics and pre-interpolation ball evidence.
+    # No second YOLO, MediaPipe, or ball-detector pass is required.
+
+    print("Generating measured coaching feedback...", flush=True)
+
+    # Supplemental coaching must not invalidate a completed shot analysis.
+    # A failure is surfaced in the response and logged; no broken URL is returned.
+    measured_coaching = None
+
+    try:
+        phase5_input = {
+            "analysis": pose_result,
+            "metrics": metrics_result,
+            "shot_count": len(shots),
+            "shots": shots,
+        }
+        phase5_reports = MeasurementCoachingPipeline().analyze(
+            phase5_input, ball_observations
+        )
+
+        # Store intermediate evidence for audits and troubleshooting.
+        phase5_paths = {
+            "temporal": "temporal_form.json",
+            "mechanics": "mechanics_evidence.json",
+            "technique": "technique_reference_review.json",
+            "sources": "source_registry_review.json",
+            "review": "coaching_review_questions.json",
+            "measured": "measured_coaching_report.json",
+        }
+        for name, filename in phase5_paths.items():
+            with (output_dir / filename).open("w", encoding="utf-8") as handle:
+                json.dump(phase5_reports[name], handle, indent=2)
+
+        measured_coaching = phase5_reports["measured"]
+        print("Measured coaching report generated.", flush=True)
+
+    except Exception:
+        logger.exception(
+            "Supplemental measured coaching failed for job %s; "
+            "preserving completed video, metrics, and Phase 4 coaching",
+            job_id,
+        )
+        (output_dir / "measured_coaching_report.json").unlink(
+            missing_ok=True
+        )
+
+    report_time("MEASURED_COACHING")
+
+    # -------------------------------------------
     # FINAL PERFORMANCE SUMMARY
     # -------------------------------------------
 
@@ -354,6 +441,26 @@ def run_full_analysis(video_path: Path, job_id: str):
         "metrics": metrics_result,
         "processing_time_seconds": round(total_time, 2),
         "stage_timings": timings,
+        "measured_coaching_summary": (
+            {
+                "status": "available",
+                "intended_form_match": measured_coaching["intended_form_match"],
+                "corrections_generated": measured_coaching["corrections_generated"],
+                "shot_reviews": [
+                    {
+                        "shot_number": shot["shot_number"],
+                        "review_candidate_count": shot["review_candidate_count"],
+                        "timing_quality": shot["timing_quality"],
+                    }
+                    for shot in measured_coaching["shots"]
+                ],
+            }
+            if measured_coaching is not None
+            else {
+                "status": "unavailable",
+                "detail": "Measured coaching failed; see backend logs.",
+            }
+        ),
         "coaching_summary": {
             "intended_form_match": coaching_report["intended_form_match"],
             "first_review_suggestion": coaching_report[
@@ -476,6 +583,14 @@ async def analyze_video(
             f"/video/results/{job_id}/metrics"
         ),
         "coaching_url": f"/video/results/{job_id}/coaching",
+        "ball_observations_url": (
+            f"/video/results/{job_id}/ball-observations"
+        ),
+        "measured_coaching_url": (
+            f"/video/results/{job_id}/measured-coaching"
+            if result["measured_coaching_summary"]["status"] == "available"
+            else None
+        ),
     }
 
 
@@ -556,4 +671,54 @@ def download_coaching_report(job_id: UUID):
         path,
         media_type="application/json",
         filename=f"{job_id}_coaching_report.json",
+    )
+
+
+# -------------------------------------------
+# DOWNLOAD DIRECT BALL OBSERVATIONS
+# -------------------------------------------
+
+@router.get("/results/{job_id}/ball-observations")
+def download_ball_observations(job_id: UUID):
+    path = (
+        ANALYZED_DIR
+        / str(job_id)
+        / "ball_observations.json"
+    )
+
+    if not path.is_file():
+        raise HTTPException(
+            status_code=404,
+            detail="Ball observation report not found",
+        )
+
+    return FileResponse(
+        path,
+        media_type="application/json",
+        filename=f"{job_id}_ball_observations.json",
+    )
+
+
+# -------------------------------------------
+# DOWNLOAD MEASUREMENT-BACKED COACHING REPORT
+# -------------------------------------------
+
+@router.get("/results/{job_id}/measured-coaching")
+def download_measured_coaching(job_id: UUID):
+    path = (
+        ANALYZED_DIR
+        / str(job_id)
+        / "measured_coaching_report.json"
+    )
+
+    if not path.is_file():
+        raise HTTPException(
+            status_code=404,
+            detail="Measured coaching report not found",
+        )
+
+    return FileResponse(
+        path,
+        media_type="application/json",
+        filename=f"{job_id}_measured_coaching.json",
     )

@@ -1,0 +1,200 @@
+{
+  "schema_version": "1.0",
+  "review_date": "2026-10-18",
+  "purpose": "Supplemental source evidence for source-linked descriptive shooting reviews; does not replace original citations.",
+  "policy": {
+    "automatic_correctness_grading": false,
+    "replace_existing_citations": false,
+    "promote_provisional_video_timestamps": false,
+    "assert_official_endorsement": false
+  },
+  "evidence_records": [
+    {
+      "id": "interview_player_assessment",
+      "reference_ids": [
+        "individualized_feedback"
+      ],
+      "source_id": "dunn_public_interview",
+      "source_url": "https://www.hustletraining.com/blog/how-to-shoot-with-perfect-form-from-professional-shooting-coach-mike-dunn",
+      "source_kind": "attributed_interview",
+      "locator": "Answer about adapting coaching for high-school and college players",
+      "claim_paraphrase": "Training begins with assessing individual habits and adapting to the person.",
+      "scope_note": "Individualized coaching process, not a diagnostic classifier.",
+      "allowed_use": "descriptive_context",
+      "reviewed_against_published_text": true,
+      "can_auto_grade_correctness": false
+    },
+    {
+      "id": "interview_balance",
+      "reference_ids": [
+        "ground_balance"
+      ],
+      "source_id": "dunn_public_interview",
+      "source_url": "https://www.hustletraining.com/blog/how-to-shoot-with-perfect-form-from-professional-shooting-coach-mike-dunn",
+      "source_kind": "attributed_interview",
+      "locator": "Answers on shooting foundations and balance",
+      "claim_paraphrase": "Balance is a central shooting foundation.",
+      "scope_note": "Cannot infer foot pressure or balance correctness from 2D pose.",
+      "allowed_use": "descriptive_context",
+      "reviewed_against_published_text": true,
+      "can_auto_grade_correctness": false
+    },
+    {
+      "id": "interview_vertical_posture",
+      "reference_ids": [
+        "posture_setup",
+        "hip_loading"
+      ],
+      "source_id": "dunn_public_interview",
+      "source_url": "https://www.hustletraining.com/blog/how-to-shoot-with-perfect-form-from-professional-shooting-coach-mike-dunn",
+      "source_kind": "attributed_interview",
+      "locator": "Answer following the question about developing balance",
+      "claim_paraphrase": "He describes a lowered body position with upright chest before moving into a shot.",
+      "scope_note": "Qualitative setup cue; not an angle threshold, universal hip depth, or verified masterclass timestamp.",
+      "allowed_use": "descriptive_context",
+      "reviewed_against_published_text": true,
+      "can_auto_grade_correctness": false
+    },
+    {
+      "id": "interview_ball_close",
+      "reference_ids": [
+        "ball_setup",
+        "free_throw_ball_pocket"
+      ],
+      "source_id": "dunn_public_interview",
+      "source_url": "https://www.hustletraining.com/blog/how-to-shoot-with-perfect-form-from-professional-shooting-coach-mike-dunn",
+      "source_kind": "attributed_interview",
+      "locator": "Free-throw routine description",
+      "claim_paraphrase": "In his free-throw example, the ball starts near the shooter's hip and body.",
+      "scope_note": "Free-throw example only; cannot impose a fixed starting position on every shot.",
+      "allowed_use": "descriptive_context",
+      "reviewed_against_published_text": true,
+      "can_auto_grade_correctness": false
+    },
+    {
+      "id": "interview_direct_path",
+      "reference_ids": [
+        "ball_path"
+      ],
+      "source_id": "dunn_public_interview",
+      "source_url": "https://www.hustletraining.com/blog/how-to-shoot-with-perfect-form-from-professional-shooting-coach-mike-dunn",
+      "source_kind": "attributed_interview",
+      "locator": "Free-throw routine description, after the hip-position example",
+      "claim_paraphrase": "He describes bringing the ball directly from its setup toward the release.",
+      "scope_note": "Qualitative free-throw example; no pixel-distance tolerance or universal path.",
+      "allowed_use": "descriptive_context",
+      "reviewed_against_published_text": true,
+      "can_auto_grade_correctness": false
+    },
+    {
+      "id": "interview_hand_position",
+      "reference_ids": [
+        "hand_under_ball"
+      ],
+      "source_id": "dunn_public_interview",
+      "source_url": "https://www.hustletraining.com/blog/how-to-shoot-with-perfect-form-from-professional-shooting-coach-mike-dunn",
+      "source_kind": "attributed_interview",
+      "locator": "Answer on common shooting habits and the guide hand",
+      "claim_paraphrase": "He discusses placing the shooting hand underneath the basketball.",
+      "scope_note": "Hand-ball contact must be visibly measurable, which wrist landmarks alone cannot establish.",
+      "allowed_use": "descriptive_context",
+      "reviewed_against_published_text": true,
+      "can_auto_grade_correctness": false
+    },
+    {
+      "id": "interview_guide_hand",
+      "reference_ids": [
+        "guide_hand_compensation"
+      ],
+      "source_id": "dunn_public_interview",
+      "source_url": "https://www.hustletraining.com/blog/how-to-shoot-with-perfect-form-from-professional-shooting-coach-mike-dunn",
+      "source_kind": "attributed_interview",
+      "locator": "Answer on thumb flick and guide-hand compensation",
+      "claim_paraphrase": "He describes guide-hand compensation as a possible cause of thumb flick in some players.",
+      "scope_note": "An illustrative explanation, not a universal diagnosis or measurable hand-force value.",
+      "allowed_use": "descriptive_context",
+      "reviewed_against_published_text": true,
+      "can_auto_grade_correctness": false
+    },
+    {
+      "id": "interview_feet_before_catch",
+      "reference_ids": [
+        "feet_ready_before_catch"
+      ],
+      "source_id": "dunn_public_interview",
+      "source_url": "https://www.hustletraining.com/blog/how-to-shoot-with-perfect-form-from-professional-shooting-coach-mike-dunn",
+      "source_kind": "attributed_interview",
+      "locator": "Answer comparing free throws with catch-and-shoot situations",
+      "claim_paraphrase": "He discusses preparing foot position before receiving the ball.",
+      "scope_note": "Catch-and-shoot context only; cannot infer whether a catch occurred from pose summary.",
+      "allowed_use": "descriptive_context",
+      "reviewed_against_published_text": true,
+      "can_auto_grade_correctness": false
+    },
+    {
+      "id": "outline_sequence_topic",
+      "reference_ids": [
+        "sequence",
+        "ball_lead"
+      ],
+      "source_id": "ground_up_outline",
+      "source_url": "https://seemikedunn.com/product/ground-up-3-0-video-course/",
+      "source_kind": "official_course_outline",
+      "locator": "Ground Up 3.0 program, Week 1",
+      "claim_paraphrase": "The curriculum names sequencing and energy creation as lesson topics.",
+      "scope_note": "Does not verify which segment of the ball moves first or any exact timing rule.",
+      "allowed_use": "topic_only",
+      "reviewed_against_published_text": true,
+      "can_auto_grade_correctness": false
+    },
+    {
+      "id": "outline_connection_topic",
+      "reference_ids": [
+        "arm_body_connection"
+      ],
+      "source_id": "ground_up_outline",
+      "source_url": "https://seemikedunn.com/product/ground-up-3-0-video-course/",
+      "source_kind": "official_course_outline",
+      "locator": "Ground Up 3.0 program, Introduction and Week 2",
+      "claim_paraphrase": "The curriculum explicitly includes connected shooting mechanics.",
+      "scope_note": "Topic confirmation only; does not verify a joint-position correction.",
+      "allowed_use": "topic_only",
+      "reviewed_against_published_text": true,
+      "can_auto_grade_correctness": false
+    },
+    {
+      "id": "outline_skills_topic",
+      "reference_ids": [
+        "skills_progression"
+      ],
+      "source_id": "ground_up_outline",
+      "source_url": "https://seemikedunn.com/product/ground-up-3-0-video-course/",
+      "source_kind": "official_course_outline",
+      "locator": "Ground Up 3.0 program, Weeks 4 through 8",
+      "claim_paraphrase": "The curriculum covers off-dribble, range, catching, guide hand, and game shots.",
+      "scope_note": "Topic outline only, not paid-lesson details or specific drill instructions.",
+      "allowed_use": "topic_only",
+      "reviewed_against_published_text": true,
+      "can_auto_grade_correctness": false
+    }
+  ],
+  "unverified_sources": [
+    {
+      "source_id": "youtube_masterclass",
+      "reason": "Specific timestamps depend on a third-party summary; direct video or transcript verification pending."
+    },
+    {
+      "source_id": "youtube_shorts",
+      "reason": "Individual YouTube Shorts have not been reviewed."
+    },
+    {
+      "source_id": "dunn_public_post",
+      "reason": "Mirrored post only; original statement not independently checked."
+    }
+  ],
+  "limitations": [
+    "Published interview and official curriculum statements are not universal angle targets.",
+    "Evidence registry confirms attribution and scope, not landmark accuracy or technique correctness.",
+    "Supplemental evidence cannot certify unreviewed masterclass timestamps."
+  ]
+}

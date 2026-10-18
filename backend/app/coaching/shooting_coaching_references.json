@@ -1,0 +1,593 @@
+{
+  "schema_version": "1.0",
+  "project": "Bullseye",
+  "review_date": "2026-10-18",
+  "purpose": "Expanded source-linked shooting learning reference, not a coaching correctness rubric.",
+  "official_endorsement": false,
+  "channel": {
+    "url": "https://www.youtube.com/@SeeMikeDunn",
+    "videos_url": "https://www.youtube.com/@SeeMikeDunn/videos",
+    "shorts_url": "https://www.youtube.com/@SeeMikeDunn/shorts",
+    "channel_id": "UCBopgKE8I0CHtd4490NeWNQ"
+  },
+  "use_policy": {
+    "automatic_correctness_grading": false,
+    "no_ideal_angles": true,
+    "missing_evidence": "not_assessed",
+    "masterclass_note": "Timestamp notes from a secondary automated summary require video review.",
+    "shorts_note": "No individual Short has been reviewed or extracted."
+  },
+  "sources": [
+    {
+      "id": "youtube_masterclass",
+      "title": "How To Shoot A Basketball: MASTERCLASS With SeeMikeDunn",
+      "medium": "youtube_long_form",
+      "url": "https://www.youtube.com/watch?v=jPHvxFiNq80",
+      "published": "2024-05-08",
+      "attribution": "SeeMikeDunn",
+      "verification": "video_identity_verified_timestamps_secondary_summary",
+      "notes": "Video identity confirmed. Timestamp summaries from a third-party AI summary, NOT a verified YouTube transcript. Manually check before asserting the exact teaching.",
+      "extraction_url": "https://videohighlight.com/v/jPHvxFiNq80"
+    },
+    {
+      "id": "youtube_shorts",
+      "title": "SeeMikeDunn YouTube Shorts collection",
+      "medium": "youtube_shorts_collection",
+      "url": "https://www.youtube.com/@SeeMikeDunn/shorts",
+      "attribution": "SeeMikeDunn",
+      "verification": "collection_only_no_individual_shorts_verified",
+      "notes": "Individual Shorts and transcripts were not retrievable in this research; no Short is falsely marked as reviewed."
+    },
+    {
+      "id": "dunn_public_interview",
+      "title": "Mike Dunn shooting-form interview",
+      "medium": "interview_transcript",
+      "url": "https://www.hustletraining.com/blog/how-to-shoot-with-perfect-form-from-professional-shooting-coach-mike-dunn",
+      "attribution": "Mike Dunn in an attributed public interview",
+      "verification": "published_transcript_read",
+      "notes": "Directly readable interview text; guidance contextual, not a universal scorecard."
+    },
+    {
+      "id": "ground_up_outline",
+      "title": "Ground Up 3.0 public curriculum outline",
+      "medium": "official_course_outline",
+      "url": "https://seemikedunn.com/product/ground-up-3-0-video-course/",
+      "attribution": "SeeMikeDunn site",
+      "verification": "official_outline_only",
+      "notes": "Course structure verified, not the paid video lesson content."
+    },
+    {
+      "id": "dunn_public_post",
+      "title": "SeeMikeDunn public shooting posts (mirrored)",
+      "medium": "coach_social_post",
+      "url": "https://twstalker.com/seemikedunn",
+      "attribution": "@seemikedunn mirrored posts",
+      "verification": "attributed_posts_mirrored_not_youtube",
+      "notes": "Not YouTube. Check original post before upgrading confidence."
+    }
+  ],
+  "principles": [
+    {
+      "id": "posture_setup",
+      "title": "Posture before motion",
+      "shot_phase": "preparation",
+      "teaching_summary": "Set up body position before coordinating the ball movement.",
+      "review_question": "Is the torso position observable at the beginning of the shot?",
+      "bullseye_candidate_signals": [
+        "shoulder_hip_positions"
+      ],
+      "missing_validation": [
+        "camera perspective",
+        "pose confidence"
+      ],
+      "citation": {
+        "source_id": "youtube_masterclass",
+        "url": "https://www.youtube.com/watch?v=jPHvxFiNq80&t=177s",
+        "timestamp_seconds": 177,
+        "evidence_level": "provisional_third_party_video_summary"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    },
+    {
+      "id": "hip_loading",
+      "title": "Hip loading",
+      "shot_phase": "preparation",
+      "teaching_summary": "Sitting into the hips is discussed as part of the shooting preparation.",
+      "review_question": "How do the measured hip and knee positions change during the setup?",
+      "bullseye_candidate_signals": [
+        "hip_angle_series",
+        "knee_angle_series"
+      ],
+      "missing_validation": [
+        "3D ambiguity",
+        "no validated joint target"
+      ],
+      "citation": {
+        "source_id": "youtube_masterclass",
+        "url": "https://www.youtube.com/watch?v=jPHvxFiNq80&t=332s",
+        "timestamp_seconds": 332,
+        "evidence_level": "provisional_third_party_video_summary"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    },
+    {
+      "id": "ground_balance",
+      "title": "Balance and connection to ground",
+      "shot_phase": "preparation",
+      "teaching_summary": "Balance and contact with the ground matter to preparation.",
+      "review_question": "Can feet and body stability be seen before the shooting motion?",
+      "bullseye_candidate_signals": [
+        "ankle_positions",
+        "pose_frames"
+      ],
+      "missing_validation": [
+        "foot-ground detection",
+        "camera perspective"
+      ],
+      "citation": {
+        "source_id": "youtube_masterclass",
+        "url": "https://www.youtube.com/watch?v=jPHvxFiNq80&t=221s",
+        "timestamp_seconds": 221,
+        "evidence_level": "provisional_third_party_video_summary"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    },
+    {
+      "id": "vertical_motion",
+      "title": "Vertical versus lateral movement",
+      "shot_phase": "set_to_release",
+      "teaching_summary": "The lesson emphasizes directing the body's movement upward rather than adding unnecessary sideways movement.",
+      "review_question": "What observed direction does the torso/hip center move, given this camera view?",
+      "bullseye_candidate_signals": [
+        "hip_center_series"
+      ],
+      "missing_validation": [
+        "camera movement",
+        "2D camera calibration"
+      ],
+      "citation": {
+        "source_id": "youtube_masterclass",
+        "url": "https://www.youtube.com/watch?v=jPHvxFiNq80&t=265s",
+        "timestamp_seconds": 265,
+        "evidence_level": "provisional_third_party_video_summary"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    },
+    {
+      "id": "ball_setup",
+      "title": "Organizing hands and ball",
+      "shot_phase": "set",
+      "teaching_summary": "Before shooting, establish a deliberate shooting-hand and ball relationship.",
+      "review_question": "Can the ball and shooting hand be tracked together at the set position?",
+      "bullseye_candidate_signals": [
+        "ball_positions",
+        "wrist_positions"
+      ],
+      "missing_validation": [
+        "finger landmarks",
+        "hand-ball contact"
+      ],
+      "citation": {
+        "source_id": "youtube_masterclass",
+        "url": "https://www.youtube.com/watch?v=jPHvxFiNq80&t=376s",
+        "timestamp_seconds": 376,
+        "evidence_level": "provisional_third_party_video_summary"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    },
+    {
+      "id": "arm_body_connection",
+      "title": "Arm/body connection",
+      "shot_phase": "set",
+      "teaching_summary": "The masterclass discusses coordinated arm and torso positioning.",
+      "review_question": "How does the elbow move relative to the shoulder and torso?",
+      "bullseye_candidate_signals": [
+        "elbow_positions",
+        "shoulder_positions"
+      ],
+      "missing_validation": [
+        "joint landmark confidence"
+      ],
+      "citation": {
+        "source_id": "youtube_masterclass",
+        "url": "https://www.youtube.com/watch?v=jPHvxFiNq80&t=464s",
+        "timestamp_seconds": 464,
+        "evidence_level": "provisional_third_party_video_summary"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    },
+    {
+      "id": "sequence",
+      "title": "Shooting movement sequence",
+      "shot_phase": "set_to_release",
+      "teaching_summary": "The shot is taught as coordinated stages, not merely a single joint angle.",
+      "review_question": "Can ball rise and knee/hip extension be time-aligned?",
+      "bullseye_candidate_signals": [
+        "ball_positions",
+        "hip_angle_series",
+        "knee_angle_series"
+      ],
+      "missing_validation": [
+        "continuous detections",
+        "validated event timing"
+      ],
+      "citation": {
+        "source_id": "youtube_masterclass",
+        "url": "https://www.youtube.com/watch?v=jPHvxFiNq80&t=555s",
+        "timestamp_seconds": 555,
+        "evidence_level": "provisional_third_party_video_summary"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    },
+    {
+      "id": "ball_lead",
+      "title": "Ball and body timing",
+      "shot_phase": "set_to_release",
+      "teaching_summary": "The ball's upward movement is discussed relative to lower-body movement.",
+      "review_question": "Does the ball begin moving before, during, or after the measurable leg extension?",
+      "bullseye_candidate_signals": [
+        "ball_positions",
+        "pose_frames"
+      ],
+      "missing_validation": [
+        "synchronized observations",
+        "no fixed timing ratio"
+      ],
+      "citation": {
+        "source_id": "youtube_masterclass",
+        "url": "https://www.youtube.com/watch?v=jPHvxFiNq80&t=961s",
+        "timestamp_seconds": 961,
+        "evidence_level": "provisional_third_party_video_summary"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    },
+    {
+      "id": "ball_path",
+      "title": "Pre-release ball pathway",
+      "shot_phase": "set_to_release",
+      "teaching_summary": "The lesson considers the path of the ball toward release and unnecessary detours.",
+      "review_question": "How consistent is the observed pre-release ball path?",
+      "bullseye_candidate_signals": [
+        "ball_positions"
+      ],
+      "missing_validation": [
+        "ball tracking gaps",
+        "view geometry"
+      ],
+      "citation": {
+        "source_id": "youtube_masterclass",
+        "url": "https://www.youtube.com/watch?v=jPHvxFiNq80&t=690s",
+        "timestamp_seconds": 690,
+        "evidence_level": "provisional_third_party_video_summary"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    },
+    {
+      "id": "progressive_motion",
+      "title": "From slow stages to fluid shooting",
+      "shot_phase": "training",
+      "teaching_summary": "Practicing stages slowly before blending them smoothly is presented as a learning process.",
+      "review_question": "Is a slow-motion set-to-release review appropriate for this player's footage?",
+      "bullseye_candidate_signals": [
+        "set_frame",
+        "release_frame"
+      ],
+      "missing_validation": [
+        "training goals",
+        "pauses not inherently incorrect"
+      ],
+      "citation": {
+        "source_id": "youtube_masterclass",
+        "url": "https://www.youtube.com/watch?v=jPHvxFiNq80&t=868s",
+        "timestamp_seconds": 868,
+        "evidence_level": "provisional_third_party_video_summary"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    },
+    {
+      "id": "release_in_sequence",
+      "title": "Release depends on preceding sequence",
+      "shot_phase": "release",
+      "teaching_summary": "Release height and timing are discussed in relation to the preceding motion.",
+      "review_question": "Where does the release occur relative to the rising body?",
+      "bullseye_candidate_signals": [
+        "release_frame",
+        "wrist_position"
+      ],
+      "missing_validation": [
+        "actual release contact uncertain",
+        "no universal release height"
+      ],
+      "citation": {
+        "source_id": "youtube_masterclass",
+        "url": "https://www.youtube.com/watch?v=jPHvxFiNq80&t=983s",
+        "timestamp_seconds": 983,
+        "evidence_level": "provisional_third_party_video_summary"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    },
+    {
+      "id": "hand_tension",
+      "title": "Ball grip and hand tension",
+      "shot_phase": "preparation",
+      "teaching_summary": "The lesson discusses hand control and avoiding excess tension.",
+      "review_question": "Is detailed hand motion visible enough even for a qualitative review?",
+      "bullseye_candidate_signals": [],
+      "missing_validation": [
+        "grip pressure cannot be inferred from pose",
+        "finger visibility"
+      ],
+      "citation": {
+        "source_id": "youtube_masterclass",
+        "url": "https://www.youtube.com/watch?v=jPHvxFiNq80&t=1487s",
+        "timestamp_seconds": 1487,
+        "evidence_level": "provisional_third_party_video_summary"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    },
+    {
+      "id": "backboard_progression",
+      "title": "Controlled backboard shooting progression",
+      "shot_phase": "practice",
+      "teaching_summary": "Simple backboard-oriented practice is introduced as a learning exercise.",
+      "review_question": "Would a controlled practice format suit the player's current skill objective?",
+      "bullseye_candidate_signals": [],
+      "missing_validation": [
+        "training context",
+        "not a mandated drill"
+      ],
+      "citation": {
+        "source_id": "youtube_masterclass",
+        "url": "https://www.youtube.com/watch?v=jPHvxFiNq80&t=1242s",
+        "timestamp_seconds": 1242,
+        "evidence_level": "provisional_third_party_video_summary"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    },
+    {
+      "id": "dribble_drop",
+      "title": "Dribble-drop shot preparation",
+      "shot_phase": "moving_shot",
+      "teaching_summary": "Dribble-drop style practice emphasizes readiness, balance, and timing.",
+      "review_question": "Does the recording capture the lead-in dribble and plant?",
+      "bullseye_candidate_signals": [
+        "ball_trajectory",
+        "ankles"
+      ],
+      "missing_validation": [
+        "dribble event detector",
+        "floor contact"
+      ],
+      "citation": {
+        "source_id": "youtube_masterclass",
+        "url": "https://www.youtube.com/watch?v=jPHvxFiNq80&t=2738s",
+        "timestamp_seconds": 2738,
+        "evidence_level": "provisional_third_party_video_summary"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    },
+    {
+      "id": "catch_and_shoot",
+      "title": "Catching into shot preparation",
+      "shot_phase": "catch_and_shoot",
+      "teaching_summary": "The masterclass discusses linking the catch and the preparatory motion.",
+      "review_question": "Can foot readiness, catch, and ball lift be measured from the footage?",
+      "bullseye_candidate_signals": [
+        "pose_frames",
+        "ball_positions"
+      ],
+      "missing_validation": [
+        "pass/catch detector",
+        "pre-shot footage"
+      ],
+      "citation": {
+        "source_id": "youtube_masterclass",
+        "url": "https://www.youtube.com/watch?v=jPHvxFiNq80&t=3584s",
+        "timestamp_seconds": 3584,
+        "evidence_level": "provisional_third_party_video_summary"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    },
+    {
+      "id": "free_throw_ball_pocket",
+      "title": "Close-to-hip starting position in example",
+      "shot_phase": "free_throw",
+      "teaching_summary": "Dunn describes a free-throw setup with the ball near the shooting-side hip/waist as one example.",
+      "review_question": "Is free-throw setup and ball-to-body distance actually visible?",
+      "bullseye_candidate_signals": [
+        "ball_positions",
+        "hip_positions"
+      ],
+      "missing_validation": [
+        "identify free throw vs jumper",
+        "camera distortion"
+      ],
+      "citation": {
+        "source_id": "dunn_public_interview",
+        "url": "https://www.hustletraining.com/blog/how-to-shoot-with-perfect-form-from-professional-shooting-coach-mike-dunn",
+        "timestamp_seconds": null,
+        "evidence_level": "published_primary_interview"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    },
+    {
+      "id": "hand_under_ball",
+      "title": "Shooting hand underneath the ball",
+      "shot_phase": "release",
+      "teaching_summary": "Dunn stresses the shooting hand being under the basketball before release.",
+      "review_question": "Can hand-to-ball contact orientation be inspected?",
+      "bullseye_candidate_signals": [
+        "wrist_position",
+        "ball_position"
+      ],
+      "missing_validation": [
+        "hands/fingers not sufficiently tracked",
+        "occlusion"
+      ],
+      "citation": {
+        "source_id": "dunn_public_interview",
+        "url": "https://www.hustletraining.com/blog/how-to-shoot-with-perfect-form-from-professional-shooting-coach-mike-dunn",
+        "timestamp_seconds": null,
+        "evidence_level": "published_primary_interview"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    },
+    {
+      "id": "guide_hand_compensation",
+      "title": "Guide-hand compensation and thumb flick",
+      "shot_phase": "release",
+      "teaching_summary": "Dunn describes some guide-hand thumb flicks as potentially compensating for shooting-hand setup.",
+      "review_question": "Do close-up frames show the guide-hand action and shooting-hand orientation?",
+      "bullseye_candidate_signals": [],
+      "missing_validation": [
+        "fine finger motion",
+        "hand-ball contact",
+        "avoid automatic thumb-flick judgment"
+      ],
+      "citation": {
+        "source_id": "dunn_public_interview",
+        "url": "https://www.hustletraining.com/blog/how-to-shoot-with-perfect-form-from-professional-shooting-coach-mike-dunn",
+        "timestamp_seconds": null,
+        "evidence_level": "published_primary_interview"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    },
+    {
+      "id": "feet_ready_before_catch",
+      "title": "Prepare feet before the catch",
+      "shot_phase": "catch_and_shoot",
+      "teaching_summary": "Dunn describes preparing the feet before catching the ball for a shot.",
+      "review_question": "Are the feet set before the ball reaches the hands?",
+      "bullseye_candidate_signals": [
+        "ankle_positions",
+        "ball_positions"
+      ],
+      "missing_validation": [
+        "full pre-catch sequence",
+        "foot contact"
+      ],
+      "citation": {
+        "source_id": "dunn_public_interview",
+        "url": "https://www.hustletraining.com/blog/how-to-shoot-with-perfect-form-from-professional-shooting-coach-mike-dunn",
+        "timestamp_seconds": null,
+        "evidence_level": "published_primary_interview"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    },
+    {
+      "id": "individualized_feedback",
+      "title": "Player-specific mechanical diagnosis",
+      "shot_phase": "all",
+      "teaching_summary": "Dunn stresses that coaching must be tailored to the player's habits rather than a universal template.",
+      "review_question": "Does the suggestion distinguish measurements from diagnosis, with uncertainties?",
+      "bullseye_candidate_signals": [
+        "shot_metrics",
+        "timing_quality"
+      ],
+      "missing_validation": [
+        "coach-reviewed labels",
+        "player context"
+      ],
+      "citation": {
+        "source_id": "dunn_public_interview",
+        "url": "https://www.hustletraining.com/blog/how-to-shoot-with-perfect-form-from-professional-shooting-coach-mike-dunn",
+        "timestamp_seconds": null,
+        "evidence_level": "published_primary_interview"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    },
+    {
+      "id": "skills_progression",
+      "title": "Shooting development across contexts",
+      "shot_phase": "practice",
+      "teaching_summary": "The public Ground Up outline progresses from grip, connection and balance to dribble shooting, range, catch/release, and game shots.",
+      "review_question": "What shooting context and development goal are represented by the clip?",
+      "bullseye_candidate_signals": [],
+      "missing_validation": [
+        "shot type classifier",
+        "paid lessons not accessed"
+      ],
+      "citation": {
+        "source_id": "ground_up_outline",
+        "url": "https://seemikedunn.com/product/ground-up-3-0-video-course/",
+        "timestamp_seconds": null,
+        "evidence_level": "official_outline_topic_only"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    },
+    {
+      "id": "avoid_forced_release_height",
+      "title": "Do not impose arbitrary high release",
+      "shot_phase": "release",
+      "teaching_summary": "A recent public coach post emphasizes release height emerging from the preceding shot rather than forcing it higher.",
+      "review_question": "Can we describe release height without an invented angle or minimum?",
+      "bullseye_candidate_signals": [
+        "release_frame",
+        "wrist_position"
+      ],
+      "missing_validation": [
+        "original post link verification",
+        "no numeric target"
+      ],
+      "citation": {
+        "source_id": "dunn_public_post",
+        "url": "https://twstalker.com/seemikedunn",
+        "timestamp_seconds": null,
+        "evidence_level": "mirrored_coach_post_unverified_original"
+      },
+      "can_auto_grade_correctness": false,
+      "safe_output": "descriptive_or_not_assessed"
+    }
+  ],
+  "shorts_review_queue": {
+    "status": "awaits_individual_short_urls_and_notes",
+    "items": [],
+    "recommended_topics": [
+      "guide hand",
+      "hand under ball",
+      "balance",
+      "sequence",
+      "ball-first timing",
+      "release timing",
+      "catch and shoot",
+      "one-hand shooting"
+    ],
+    "required_fields": [
+      "url",
+      "title",
+      "timestamp_seconds",
+      "teaching_summary",
+      "reviewed_by",
+      "evidence_level"
+    ]
+  },
+  "measurement_limitations": [
+    "The current pipeline uses 2D joints and intermittent ball detections, not force plates or 3D biomechanics.",
+    "100% pose coverage does not prove pose landmark accuracy.",
+    "Hand-to-ball contact and fine thumb action are not measurable from wrists alone.",
+    "No auto-correction, ideal elbow angle, or forced set/release position is warranted.",
+    "Masterclass notes may contain summary or translation errors; check the linked times.",
+    "Some guidance is specific to free throws, training contexts or an individual athlete."
+  ]
+}
