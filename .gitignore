@@ -1,3 +1,6 @@
 
 backend/hoop_frames/
 backend/hoop_frames_sample/
+
+# Local API credentials
+backend/.env
