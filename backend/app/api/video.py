@@ -23,6 +23,7 @@ from app.analysis.shot_tracker import (
 )
 from app.analysis.shooting_metrics import ShootingMetrics
 from app.analysis.shooting_analysis_renderer import ShootingAnalysisRenderer
+from app.analysis.browser_video import ensure_browser_video
 
 from tools.detect_yolo26_local import detect_video
 
@@ -288,6 +289,29 @@ def run_full_analysis(video_path: Path, job_id: str):
         )
 
     # -------------------------------------------
+    # PHASE 6: BROWSER-COMPATIBLE H.264 VIDEO
+    # -------------------------------------------
+    # Keep the original MP4; conversion must not block shot analysis.
+    browser_video_status = "unavailable"
+    try:
+        browser_result = ensure_browser_video(rendered_path)
+        browser_video_status = "available"
+        logger.info(
+            "Browser video %s for job %s: %s",
+            "created" if browser_result.created else "reused",
+            job_id,
+            browser_result.path.name,
+        )
+    except Exception:
+        logger.exception(
+            "Optional H.264 conversion failed for job %s; "
+            "preserving original video and analysis outputs",
+            job_id,
+        )
+
+    report_time("BROWSER_H264")
+
+    # -------------------------------------------
     # PHASE 4: EVIDENCE-AWARE COACHING REPORT
     # -------------------------------------------
 
@@ -441,6 +465,7 @@ def run_full_analysis(video_path: Path, job_id: str):
         "metrics": metrics_result,
         "processing_time_seconds": round(total_time, 2),
         "stage_timings": timings,
+        "browser_video_status": browser_video_status,
         "measured_coaching_summary": (
             {
                 "status": "available",
